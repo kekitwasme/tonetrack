@@ -1,38 +1,29 @@
 import { useState } from "react"
 import useUserData from "@stores/useUserData"
 
-const defaultRoutine = {}
-
 export default () => {
-    const [currentRoutine, setCurrentRoutine] = useState(defaultRoutine)
-    const { email, data, updateUserData } = useUserData()
+    const { email, data, addTask } = useUserData()
+    const [currentTask, setCurrentTask] = useState({ id: data ? data.tasks.nextID : 0 })
 
     const handleInputChange = (event) => {
         const { name, value } = event.target
 
         const [parent, child] = name.split(":")
 
-        setCurrentRoutine(child ? { ...currentRoutine, [parent]: { ...currentRoutine[parent], [child]: value } } : { ...currentRoutine, [name]: value })
+        setCurrentTask(child ? { ...currentTask, [parent]: { ...currentTask[parent], [child]: value } } : { ...currentTask, [name]: value })
     }
 
-    const updateUserRoutines = async () => {
-        const { nextID, items } = data.routines
-
-        const routines = {
-            nextID: nextID + 1,
-            items: [
-                ...items,
-                {
-                    ...currentRoutine,
-                    id: nextID,
-                },
-            ],
-        }
+    const createTask = async () => {
+        const newNextID = data.tasks.nextID + 1
+        const newTaskItems = [...data.tasks.items, currentTask]
 
         const payload = {
             email: email,
             data: {
-                "data.routines": routines,
+                "data.tasks": {
+                    nextID: newNextID,
+                    items: newTaskItems,
+                },
             },
         }
 
@@ -46,33 +37,31 @@ export default () => {
             // return if the update was acknowledged
             .then(({ data, message }) => data.acknowledged)
             .catch((error) => {
-                console.error("Failed to update remote user routines:", error)
+                console.error("Failed to update remote user tasks:", error)
             })
 
-        if (updated) updateUserData({ data: { routines: routines } })
+        if (updated) addTask({ data: { tasks: tasks } })
     }
 
-    const Tasks = () => {
-        return data.tasks.map(({ id, name }) => (
+    const Routines = () => {
+        return data.routines.items.map(({ id, name }) => (
             <option key={id} value={id}>
                 {name}
             </option>
         ))
     }
 
-    if (!userData) return null
+    const Types = () => {}
+
+    if (!data) return null
 
     return (
         <form className="flex flex-col space-y-5 items-center" onChange={handleInputChange}>
-            <label htmlFor="name">Routine Name</label>
+            <label htmlFor="name">Task Name</label>
             <input name="name" id="name" />
 
             <label htmlFor="type">Type</label>
             <select name="type" id="type"></select>
-
-            <select name="tasks" id="tasks" multiple>
-                <Tasks />
-            </select>
 
             <label htmlFor="duration">Duration</label>
             <div className="flex flex-row" name="duration" id="duration">
@@ -81,9 +70,11 @@ export default () => {
             </div>
 
             <label htmlFor="routine">Routine</label>
-            <select name="routine" id="routine"></select>
+            <select name="routineID" id="routineID">
+                <Routines />
+            </select>
 
-            <button type="button" onClick={updateUserRoutines}>
+            <button type="button" onClick={createTask}>
                 Create
             </button>
         </form>

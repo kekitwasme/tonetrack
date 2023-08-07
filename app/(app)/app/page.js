@@ -4,6 +4,8 @@ import { useEffect } from "react"
 import { useSession } from "next-auth/react"
 import useUserData from "@stores/useUserData"
 
+import Body from "@components/app/body"
+
 const Welcome = () => {
     return (
         <div className="block text-center">
@@ -16,7 +18,7 @@ const Welcome = () => {
 
 export default () => {
     const { data: session, status, update: updateSession } = useSession({ required: true })
-    const { userData, setUserData } = useUserData()
+    const { data, setUserData } = useUserData()
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -24,12 +26,13 @@ export default () => {
             setUserData(data)
         }
 
-        session && !userData && fetchUserData()
+        session && !data && fetchUserData()
     })
 
     return (
         <div>
             <Welcome />
+            <Body />
         </div>
     )
 }

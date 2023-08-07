@@ -1,11 +1,11 @@
 import useMenu from "@stores/useMenu"
 
 export default () => {
-    const { open, setOpen } = useMenu()
+    const { menu, setMenu } = useMenu()
 
     return (
         <div>
-            <button onClick={() => setOpen(!open)}>Menu</button>
+            <button onClick={() => setMenu({ open: !menu.open })}>Menu</button>
         </div>
     )
 }
