@@ -1,7 +1,7 @@
 import NextAuth from "next-auth/next"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
-import { getDB } from "@lib/mongodb"
+import { getUser, insertUser } from "@lib/mongodb"
 
 const config = {
     providers: [
@@ -18,14 +18,12 @@ const config = {
                 },
             },
             async authorize(credentials, req) {
-                return await getDB().then(async (db) => {
-                    const user = await db.collection("data").findOne({
-                        email: credentials.email,
-                        password: credentials.password,
-                    })
-
-                    return user ? user : null
+                const user = await getUser({
+                    email: credentials.email,
+                    password: credentials.password,
                 })
+
+                return user ? user : null
             },
         }),
         Google({
@@ -35,21 +33,30 @@ const config = {
     ],
     callbacks: {
         async signIn({ user, account }) {
-            if (account.provider !== "credentials") {
-                await getDB()
-                    .then(async (db) => {
-                        const filter = { email: user.email.toLowerCase() }
-                        const update = { $set: { password: user.password } }
-                        const option = { upsert: true }
+            if (account.provider === "credentials") return true
 
-                        return await db.collection("data").updateOne(filter, update, option)
-                    })
-                    .catch((error) => {
-                        throw new Error(error)
-                    })
+            const existingUser = await getUser({ email: user.email })
+
+            if (existingUser) return true
+
+            const defaultData = {
+                items: [],
+                nextID: 0,
             }
 
-            return true
+            return await insertUser({
+                ...user,
+                data: {
+                    tasks: defaultData,
+                    routines: defaultData,
+                    todos: defaultData,
+                },
+            })
+                .then((res) => res.acknowledged)
+                .catch((error) => {
+                    // handle the error
+                    return false
+                })
         },
         async session({ session }) {
             return session

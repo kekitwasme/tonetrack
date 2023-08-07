@@ -23,6 +23,7 @@ export default () => {
     useEffect(() => {
         const fetchUserData = async () => {
             const { data, message } = await fetch("/api/user?email=" + session.user.email).then((res) => res.json())
+            console.log(data)
             setUserData(data)
         }
 
