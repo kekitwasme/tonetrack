@@ -13,7 +13,7 @@ export default () => {
     const { data } = useUserData()
 
     const SearchBar = () => {
-        return
+        return <input className="w-4/5 border-2"></input>
     }
 
     const CreationButton = () => {
@@ -36,7 +36,12 @@ export default () => {
 
     const Tasks = () => {
         return (
-            <div className="flex flex-col h-4/5 p-5 rounded-sm border-2">
+            <div className="flex flex-col space-y-5 h-full p-5 rounded-sm border-2 bg-violet-100">
+                <div className="flex justify-between">
+                    <SearchBar />
+                    <CreationButton />
+                </div>
+
                 {data.tasks.items.map((task) => {
                     return (
                         <Card key={task.id}>
@@ -51,7 +56,7 @@ export default () => {
                                 <div className="flex flex-col justify-between">
                                     <button>Edit</button>
 
-                                    <CreationButton />
+                                    <button>+</button>
                                 </div>
                             </div>
                         </Card>
