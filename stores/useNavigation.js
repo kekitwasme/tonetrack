@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
 export default create((set) => ({
-    selected: "todos",
+    selected: "tasks",
     setSelected: (selected) => set({ selected: selected }),
 }))

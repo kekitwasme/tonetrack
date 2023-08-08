@@ -24,9 +24,9 @@ export const POST = async (req) => {
 }
 
 export const PUT = async (req) => {
-    const { email, data } = await req.json()
+    const { matchBy, operation, options = {} } = await req.json()
 
-    return await updateUser({ email: email }, { $set: data })
+    return await updateUser(matchBy, operation, options)
         .then((response) =>
             response && response.acknowledged ? NextResponse.json({ data: response }) : NextResponse.json({ message: "unknown database error" }, { status: 500 })
         )

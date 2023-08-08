@@ -3,24 +3,11 @@ import { create } from "zustand"
 export default create((set) => {
     return {
         setUserData: (data) => set({ ...data }),
-        addTask: (task) =>
-            set((data) => {
-                data.tasks.items.push(task)
-                data.tasks.nextID++
-
-                return data
+        addItem: (item, to) =>
+            set(({ data }) => {
+                data[to].nextID++
+                data[to].items.push(item)
+                return { data: data }
             }),
-        // addRoutine: (routine) =>
-        //     set((userData) => {
-        //         userData.routines.items.push(routine)
-        //         userData.routines.nextID++
-        //         return userData
-        //     }),
-        // addTodo: (todo) =>
-        //     set((userData) => {
-        //         userData.todos.items.push(todo)
-        //         userData.todos.nextID++
-        //         return userData
-        //     }),
     }
 })

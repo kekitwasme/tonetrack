@@ -5,7 +5,7 @@ const defaultRoutine = {}
 
 export default () => {
     const [currentRoutine, setCurrentRoutine] = useState(defaultRoutine)
-    const { email, data, setUserData } = useUserData()
+    const { email, data, addItem } = useUserData()
 
     const handleInputChange = (event) => {
         const { name, value } = event.target
@@ -16,23 +16,11 @@ export default () => {
     }
 
     const updateUserRoutines = async () => {
-        const { nextID, items } = data.routines
-
-        const routines = {
-            nextID: nextID + 1,
-            items: [
-                ...items,
-                {
-                    ...currentRoutine,
-                    id: nextID,
-                },
-            ],
-        }
-
         const payload = {
-            email: email,
-            data: {
-                "data.routines": routines,
+            matchBy: { email: email },
+            operation: {
+                $inc: { "data.routines.nextID": 1 },
+                $push: { "data.routines.items": currentRoutine },
             },
         }
 
@@ -49,43 +37,31 @@ export default () => {
                 console.error("Failed to update remote user routines:", error)
             })
 
-        if (updated) setUserData({ data: { routines: routines } })
-    }
-
-    const Tasks = () => {
-        return data.tasks.items.map(({ id, name }) => (
-            <option key={id} value={id}>
-                {name}
-            </option>
-        ))
+        if (updated) addItem(currentRoutine, "routines")
     }
 
     if (!data) return null
 
     return (
-        <form className="flex flex-col space-y-5 items-center" onChange={handleInputChange}>
+        <div className="flex flex-col space-y-5 items-center h-1/3 w-1/3 self-center bg-violet-100" onChange={handleInputChange}>
             <label htmlFor="name">Routine Name</label>
             <input name="name" id="name" />
 
             <label htmlFor="type">Type</label>
             <select name="type" id="type"></select>
 
-            <select name="tasks" id="tasks" multiple>
-                <Tasks />
+            <label htmlFor="tasks">Tasks</label>
+            <select name="tasks" id="tasks">
+                {data.tasks.items.map(({ id, name }) => (
+                    <option name="taskIDs" key={id} value={id}>
+                        {name}
+                    </option>
+                ))}
             </select>
-
-            <label htmlFor="duration">Duration</label>
-            <div className="flex flex-row" name="duration" id="duration">
-                <input name="duration:value" />
-                <input name="duration:unit" />
-            </div>
-
-            <label htmlFor="routine">Routine</label>
-            <select name="routine" id="routine"></select>
 
             <button type="button" onClick={updateUserRoutines}>
                 Create
             </button>
-        </form>
+        </div>
     )
 }

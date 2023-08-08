@@ -2,7 +2,7 @@ import { useState } from "react"
 import useUserData from "@stores/useUserData"
 
 export default () => {
-    const { email, data, addTask } = useUserData()
+    const { email, data, addItem } = useUserData()
     const [currentTask, setCurrentTask] = useState({ id: data ? data.tasks.nextID : 0 })
 
     const handleInputChange = (event) => {
@@ -14,20 +14,15 @@ export default () => {
     }
 
     const createTask = async () => {
-        const newNextID = data.tasks.nextID + 1
-        const newTaskItems = [...data.tasks.items, currentTask]
-
         const payload = {
-            email: email,
-            data: {
-                "data.tasks": {
-                    nextID: newNextID,
-                    items: newTaskItems,
-                },
+            matchBy: { email: email },
+            operation: {
+                $inc: { "data.tasks.nextID": 1 },
+                $push: { "data.tasks.items": currentTask },
             },
         }
 
-        // result will be truthy if the update was acknowledged, else falsy
+        // updated will be truthy if the update was acknowledged, else falsy
         const updated = await fetch("api/user", {
             method: "PUT",
             body: JSON.stringify(payload),
@@ -40,7 +35,7 @@ export default () => {
                 console.error("Failed to update remote user tasks:", error)
             })
 
-        if (updated) addTask({ data: { tasks: tasks } })
+        if (updated) addItem(currentTask, "tasks")
     }
 
     const Routines = () => {
@@ -55,8 +50,10 @@ export default () => {
 
     if (!data) return null
 
+    console.log(data)
+
     return (
-        <form className="flex flex-col space-y-5 items-center" onChange={handleInputChange}>
+        <div className="flex flex-col space-y-5 items-center  h-1/3 w-1/3 self-center bg-violet-100" onChange={handleInputChange}>
             <label htmlFor="name">Task Name</label>
             <input name="name" id="name" />
 
@@ -77,6 +74,6 @@ export default () => {
             <button type="button" onClick={createTask}>
                 Create
             </button>
-        </form>
+        </div>
     )
 }
