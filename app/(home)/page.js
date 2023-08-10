@@ -1,3 +1,4 @@
+"use client"
 const Welcome = () => {
     return (
         <div className="block text-center">
@@ -7,12 +8,10 @@ const Welcome = () => {
         </div>
     )
 }
-import SignInForm from "@components/signInForm"
 export default () => {
     return (
-        <div>
+        <div className="flex flex-col h-full">
             <Welcome />
-            <SignInForm />
         </div>
     )
 }
