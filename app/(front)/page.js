@@ -7,11 +7,12 @@ const Welcome = () => {
         </div>
     )
 }
-
+import SignInForm from "@components/signInForm"
 export default () => {
     return (
         <div>
             <Welcome />
+            <SignInForm />
         </div>
     )
 }

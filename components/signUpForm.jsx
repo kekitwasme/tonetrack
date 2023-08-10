@@ -5,6 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import userIcon from "@assets/user.svg";
 import emailIcon from "@assets/email.svg";
 import passwordIcon from "@assets/password.svg";
+import facebookIcon from "@assets/facebookIcon.svg";
+import googleIcon from "@assets/googleIcon.svg";
+import appleIcon from "@assets/appleIcon.svg";
+import logoIcon from "@assets/logoIcon.svg";
 
 export default () => {
   const [name, setName] = useState({
@@ -131,7 +135,7 @@ export default () => {
 
       {maybeGetMessage(password)}
       <div className="w-25 h-11 flex flex-row justify-between space-x-0  bg-white px-5 ">
-        <Image src={passwordIcon} alt="email icon" />
+        <Image src={passwordIcon} alt="password icon" />
         <input
           className="grow text-lg focus:outline-none px-5"
           type="password"
@@ -141,7 +145,7 @@ export default () => {
       </div>
       {maybeGetMessage(password)}
       <div className="w-25 h-11 flex flex-row justify-between space-x-0  bg-white px-5">
-        <Image src={passwordIcon} alt="email icon" />
+        <Image src={passwordIcon} alt="password icon" />
         <input
           className="grow text-lg focus:outline-none px-5"
           type="password"
