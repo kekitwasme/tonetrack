@@ -2,11 +2,11 @@ import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 
 export default () => {
-    const { status, update: updateSession } = useSession()
+    const { status } = useSession()
 
     return (
         // navigation bar
-        <nav className="flex">
+        <nav className="flex text-white top-0 fixed pt-4 px-7">
             <Link href="/">home</Link>
 
             {/* user actions div */}
@@ -16,7 +16,7 @@ export default () => {
                         {/* redirect to app */}
                         <Link href={"/app"}>Try out the app!</Link>
 
-                        <Link href={"/sign-Up"}>Sign Up Now!</Link>
+                        <Link href={"/sign-up"}>Sign Up Now!</Link>
 
                         {/* log in button */}
                         <button onClick={signOut}>Sign Out</button>

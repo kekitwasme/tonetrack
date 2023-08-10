@@ -1,3 +1,3 @@
 export default () => {
-    return <footer>front page footer</footer>
+    return <footer className="bottom-0 fixed">front page footer</footer>
 }
