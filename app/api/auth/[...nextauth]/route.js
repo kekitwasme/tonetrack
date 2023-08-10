@@ -4,6 +4,9 @@ import Credentials from "next-auth/providers/credentials"
 import { getUser, insertUser } from "@lib/mongodb"
 
 const config = {
+    pages: {
+        signIn: "/sign-in",
+    },
     providers: [
         Credentials({
             name: "your ToneTrack account",
