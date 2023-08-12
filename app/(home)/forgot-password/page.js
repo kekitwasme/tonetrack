@@ -46,7 +46,7 @@ export default () => {
       </span>
 
       <div className="flex flex-col place-content-center">
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email"></label>
         <div className="w-25 h-11 flex flex-row justify-between space-x-0  bg-white px-5 ">
           <Image src={emailIcon} alt="email icon" />
           <input
