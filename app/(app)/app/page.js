@@ -1,14 +1,20 @@
 "use client"
 
-import { useEffect } from "react"
-import { useSession } from "next-auth/react"
-import useUserData from "@stores/useUserData"
+import Card from "@components/app/itemCard"
+import ExpandedCard from "@components/app/itemCardExpanded"
 
-import Body from "@components/app/body"
+import { useSession } from "next-auth/react"
+import { useEffect } from "react"
+
+import { useUser } from "@stores/dataStates"
+import { useMenu, useExpandItemCard, useNavigationBar } from "@stores/visibilityStates"
 
 export default () => {
-    const { data: session, status, update: updateSession } = useSession({ required: true })
-    const { data, setUserData } = useUserData()
+    const { data: session, status } = useSession({ required: true })
+    const { data: userData, setUserData } = useUser()
+    const { expand: expandItemCard, set: setExpandItemCard } = useExpandItemCard()
+    const { visible: menuOpen, selected: selectedMenuOption, set: setMenu } = useMenu()
+    const { visible: showNavigationBar, selected: selectedView, set: setNavigationBar } = useNavigationBar()
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -16,12 +22,104 @@ export default () => {
             setUserData(data)
         }
 
-        status === "authenticated" && session && !data && fetchUserData()
+        status === "authenticated" && session && !userData && fetchUserData()
     })
+
+    useEffect(() => {
+        setNavigationBar({ show: !(menuOpen || expandItemCard) })
+    }, [menuOpen, expandItemCard])
+
+    const SearchBar = () => {
+        return <input className="w-full mr-5 border-2 bg-transparent"></input>
+    }
+
+    const CreationButton = () => {
+        return (
+            <button
+                onClick={() => {
+                    setExpandItemCard({ expand: true })
+                }}
+                className="mr-2 text-white border-white border-1 p-1"
+            >
+                +
+            </button>
+        )
+    }
+
+    const Todos = () => {
+        data.todos.items.map(() => {})
+
+        return
+    }
+
+    const Tasks = () => {
+        return (
+            <>
+                <div className="flex justify-between">
+                    <SearchBar />
+                    <CreationButton />
+                </div>
+
+                {userData.tasks.items.map((task) => {
+                    return (
+                        <Card key={task.id} item={task}>
+                            <div className="flex space-x-5 h-full justify-between">
+                                <div className="flex flex-col w-4/5">
+                                    <h1>{task.name}</h1>
+                                </div>
+
+                                <button className="self-start">+</button>
+                            </div>
+                        </Card>
+                    )
+                })}
+            </>
+        )
+    }
+
+    const Routines = () => {
+        return (
+            <>
+                <div className="flex justify-between">
+                    <SearchBar />
+                    <CreationButton />
+                </div>
+
+                {userData.routines.items.map((task) => {
+                    return (
+                        <Card key={task.id} item={task}>
+                            <div className="flex space-x-5 h-full justify-between">
+                                <div className="flex flex-col w-4/5">
+                                    <h1>{task.name}</h1>
+                                </div>
+
+                                <button className="self-start">+</button>
+                            </div>
+                        </Card>
+                    )
+                })}
+            </>
+        )
+    }
+
+    const getLayout = () => {
+        switch (selectedView) {
+            case "todos":
+                return <Todos />
+            case "tasks":
+                return <Tasks />
+            case "routines":
+                return <Routines />
+        }
+        return
+    }
+
+    if (!userData) return
 
     return (
         <div className="grow">
-            <Body />
+            <div className="flex flex-col justify-start space-y-10 h-full p-6">{userData && getLayout()}</div>
+            {expandItemCard && <ExpandedCard />}
         </div>
     )
 }

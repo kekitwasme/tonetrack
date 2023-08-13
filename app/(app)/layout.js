@@ -2,25 +2,48 @@
 
 import "./styles.css"
 
-import Header from "@components/app/header"
-import Footer from "@components/app/footer"
-
-import useModal from "@stores/useModal"
-
 import { SessionProvider } from "next-auth/react"
-import Modal from "@components/app/wrappers/modal"
+
+import { useMenu, useNavigationBar } from "@stores/visibilityStates"
+
+const Menu = () => {
+    const { set } = useMenu()
+
+    return (
+        <div className="text-white fixed top-0">
+            <button onClick={() => set({ open: true })}>Menu</button>
+        </div>
+    )
+}
+
+const NavigationBar = () => {
+    const { show, set } = useNavigationBar()
+
+    const setSelected = (selected) => {
+        set({ selected: selected })
+    }
+
+    return show ? (
+        <nav className="flex flex-row justify-evenly space-x-5 fixed bottom-0 w-full text-white">
+            <button onClick={() => setSelected("todos")}>todo</button>
+            <button onClick={() => setSelected("routines")}>routines</button>
+            <button onClick={() => setSelected("tasks")}>tasks</button>
+            <button onClick={() => setSelected("achievements")}>achievements</button>
+        </nav>
+    ) : null
+}
 
 export default ({ children, session }) => {
-    const { open } = useModal()
-
     return (
         <html lang="en">
             <SessionProvider session={session}>
-                <body className="p-5 h-screen w-screen flex flex-col">
-                    <Header />
+                <body
+                    className="p-5 h-screen w-screen flex flex-col"
+                    style={{ background: "linear-gradient(150deg, #000 0%, #484176 0.01%, #000 20.83%, #484176 86.98%, #ECE9FF 100%)" }}
+                >
+                    <Menu />
                     {children}
-                    <Footer />
-                    {open && <Modal />}
+                    <NavigationBar />
                 </body>
             </SessionProvider>
         </html>
