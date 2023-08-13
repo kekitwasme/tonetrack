@@ -193,7 +193,7 @@ export default () => {
 
     const getConfirmation = () => {}
 
-    const updating = currentItem
+    const updating = currentItem !== null && currentItem !== undefined
 
     return (
         <div className="inset-0 backdrop-blur-md flex justify-center fixed z-10" onClick={exit}>
