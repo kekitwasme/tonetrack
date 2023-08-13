@@ -44,7 +44,7 @@ const config = {
 
             const defaultData = {
                 items: [],
-                nextID: 0,
+                nextID: 1,
             }
 
             return await insertUser({
