@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/*colour palette
+button: bg-gradient-to-r from-cyan-100 from-30% via-violet-100 via-70% to-violet-300
+cyan 100
+violet 100
+violet 300
+indigo 900
+Zinc 800
+Zinc900
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
