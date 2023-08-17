@@ -1,3 +1,3 @@
 export default ({ children }) => {
-    return <div></div>
+    return <div className="">{children}</div>
 }
